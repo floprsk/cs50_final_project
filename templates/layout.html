@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="/static/mediaqueries.css" rel="mediaqueries" />
+        <link href="/static/style.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        <title>dragon tree</title>
+    </head>
+
+    <body>
+        <nav>
+            <button style="visibility:hidden;" id="darkmode_button" class="btn btn-light" onclick="darkMode()"  type="button">
+                <span  class="material-symbols-outlined">
+                    dark_mode
+                    </span>
+            </button>
+
+            <div class="logo_nav">
+            <a href="/">
+                <div class="logo">dragon tree <span class="plant material-symbols-outlined">
+                    psychiatry</span>
+                </div>
+            </a> 
+            </div> 
+            
+            <button class="btn btn-light" id="person_button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasScrolling">
+                <span class="person material-symbols-outlined">
+                    person
+                </span>
+            </button>
+
+                <div class="offcanvas offcanvas-end"  data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                    <h5 id="offcanvasRightLabel">
+                        {% if session["name"] %}
+                            Logged in as {{session["name"]}}.
+                        {% else %}
+                            You're not logged in.
+                        {% endif %}
+                        </h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div class="offcanvas_container">
+                        {% if session["name"] %}
+                        <a href="/">
+                            <button type="submit" class="btn btn-light">
+                                <span class="material-symbols-outlined">
+                                    psychiatry
+                                </span>
+                                <span>Plants</span>
+                            </button>
+                        </a>
+                        <a href="adding_page">
+                            <button type="button" class="btn btn-light">
+                                <span class="material-symbols-outlined">
+                                    add
+                                </span>
+                                <span>Add plant</span>
+                            </button>
+                        </a>
+                        
+                        
+                    <div class="link_container">
+                        <a href="/register">
+                            <button class="btn btn-light">
+                                <div class="icon_container">
+                                <span class="material-symbols-outlined">
+                                    badge
+                                    </span>
+                                <span>Register</span>
+                                </div>
+                            </button>
+                        </a>
+                        {% if session["name"] %}
+                        <a href="/logout">
+                            <button class="btn btn-light">
+                                <div class="icon_container">
+                                <span class="material-symbols-outlined">
+                                    logout
+                                    </span>
+                                <span>Log out</span>
+                                </div>
+                            </button>
+                        </a>
+                        {% endif %}
+                        {% else %}
+                            <a href="/login">
+                                <div class="icon_container">
+                                    <button class="btn btn-light">
+                                        <span class="material-symbols-outlined">
+                                            login
+                                            </span>
+                                        <span>Log in</span>
+                                    </button>
+                                </div>
+                                </a>
+
+                            <br>
+                            <a href="/register">
+                                <div class="icon_container">
+                                    <button class="btn btn-light">
+                                        <span class="material-symbols-outlined">
+                                            badge
+                                            </span>
+                                        <span>Register</span>
+                                    </button>
+                            </a>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                    {% endif %}
+                </div>     
+        </nav>
+
+
+    <div class="content_container">
+
+
+        {% block body %}
+        
+        {% endblock %}
+
+    </div>
+
+ 
+    </body>
+</html>

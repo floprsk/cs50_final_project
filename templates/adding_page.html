@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+{% block body %}
+<div style="width: fit-content;" class="input_group_nobt">
+    <p class="d-inline-flex">
+        <button class="button-4" type="button" data-bs-toggle="collapse" data-bs-target="#infos" aria-expanded="false" aria-controls="collapseExample">
+            Infos on usage
+        </button>
+    </p>
+    <div class="collapse" id="infos" >
+        <div style="width:fit-content;" class="card card-body">
+            <span style="text-align: left;">Application needs to be combined with the installation of a <b>waterpump</b> and <b>humidity sensors</b> to work properly.</span>
+        </div>
+    </div>
+</div>
+
+    <div class="background">
+        {% with messages = get_flashed_messages() %} 
+        {% if messages %}
+        <ul class="flashes" style="list-style: none">
+        {% for message in messages %}
+        <li>{{message}}</li>
+        {% endfor %}
+        </ul>
+        {% endif %} {% endwith %}
+
+        <div class="plant_form_container">
+            <form name="add_plant" action="/add_plant" method="post">
+
+            <div class="input_group_nobt">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Plant</span>
+                    <input
+                    name="plant_name"
+                    autofocus
+                    type="text"
+                    class="form-control"
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    />
+                </div>
+
+                <div class="input-group">
+                    <span style="width:10rem" class="input-group-text">Watering amount</span>
+                    <input name="watering_amount" type="number" value="10" readonly class="form-control"
+                    style="text-align: center;">
+                    <span class="input-group-text">s</span>
+                </div>
+            </div>
+
+            <div class="input_group_nobt">
+                <p class="d-inline-flex">
+                    <button class="button-4" type="button" data-bs-toggle="collapse" data-bs-target="#weekday_picker" aria-expanded="false" aria-controls="collapseExample">
+                        Watering Schedule Settings
+                    </button>
+                </p>
+                <div class="collapse" id="weekday_picker">
+                    <div class="card card-body">
+                        <span style="text-align: center; font-size: small; color: #A7A7A7;">weekdays</span>
+                        <!-- Weekday Picker -->
+                        <div class="dowPicker">
+                            <div class="dowPickerOption">
+                            <input name ="dow1" type="checkbox" id="dow1" value="Sun">
+                            <label for="dow1">S</label>
+                            </div>
+                            <div class="dowPickerOption" >
+                            <input name ="dow2" type="checkbox" id="dow2" value="Mon">
+                            <label for="dow2">M</label>
+                            </div>
+                            <div class="dowPickerOption">
+                            <input name ="dow3" type="checkbox" id="dow3" value="Tue">
+                            <label for="dow3">T</label>
+                            </div>
+                            <div class="dowPickerOption" >
+                            <input name ="dow4" type="checkbox" id="dow4" value="Wed">
+                            <label for="dow4">W</label>
+                            </div>
+                            <div class="dowPickerOption">
+                            <input name ="dow5" type="checkbox" id="dow5" value="Thu">
+                            <label for="dow5">T</label>
+                            </div>
+                            <div class="dowPickerOption">
+                            <input name ="dow6" type="checkbox" id="dow6" value="Fri">
+                            <label for="dow6">F</label>
+                            </div>
+                            <div class="dowPickerOption">
+                            <input name ="dow7" type="checkbox" id="dow7" value="Sat">
+                            <label for="dow7">S</label>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:1rem;" class="input-group">
+                            <span style="width:10rem;" class="input-group-text">Watering time</span>
+                            <input placeholder="0-23" name="watering_time" type="number" min="0" max="23" class="form-control">
+                            <span class="input-group-text">h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input_group_nobt">
+                <div id="switch" class="form-check form-switch">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Humidity Sensor</label>
+                    <input name="is_sensor" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                </div>
+
+                <div id="switch" class="form-check form-switch">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Water Pump</label>
+                    <input name="is_waterpump" class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                </div>
+            </div>
+
+            <div class="input_group_nobt">
+                <button class="button-4" type="submit">add</button>
+            </div>  
+            </form>
+        </div>
+    </div>
+
+        {% if plants %} 
+        <ul class="list list-group">
+            {% for plant in plants%}
+            <li class="list-group-item">
+                <div class="icon_container">
+                    {{plant[1]}}
+                </div>
+                <div class="icon_container">
+                    <form action="/" method="post">
+                        <input name="plant_id_info" type="hidden" value="{{ plant[0] }}"/>
+                        <button type="submit" class="btn btn-light">
+                        <span class="material-symbols-outlined">
+                            psychiatry
+                        </span>
+                        </button>
+                    </form>
+                </div>
+                <div class="icon_container">
+                    {% if plant[2] ==  None %}      <!--humidity-->
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="No humidity sensor data availabe.">
+                            format_color_reset
+                        </span>
+
+                    {% elif plant[2] <= 33 %}
+                    <span class="material-symbols-outlined"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Plant needs water.">
+                        humidity_low
+                        </span>
+                    <span>{{ plant[2] }}%</span> <!--moisture-->
+                    {% elif plant[2] <= 66 %}
+                    <span class="material-symbols-outlined"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Humidity Medium.">
+                        humidity_mid
+                        </span>
+                    <span>{{ plant[2] }}%</span> <!--moisture-->
+                    {% elif plant[2] <= 100 %}
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Plant is watered properly.">
+                            humidity_high
+                        </span>
+                        <span>{{ plant[2] }}%</span> <!--moisture-->
+
+                {% endif %}
+                </div>
+                <div class="icon_container">
+                {% if plant[7] == None %} <!--plant[7]: is_waterpump-->
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Waterpump not installed.">
+                            block
+                        </span> 
+                </div>
+                {% else %} 
+                    <form action="/water_plant" method="post">
+                        <button type="submit" class="btn btn-light">
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="click to water plant">
+                        water_drop</span>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="icon_container">
+                    <form action="/delete_plant" method="post">
+                        <input name="plant_id" type="hidden" value="{{ plant[0] }}" />
+                        <button type="submit" class="btn btn-light">
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="click to delete plant"> delete </span>
+                        </button>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+            
+          </ul>
+        {% else %} 
+        <p>No plants in your plant bed yet.</p>
+        {% endif %}
+
+        <footer>
+            <p>Copyright &copy 2023 Florian Purschke. All Rights Reserved</p>
+          </footer>
+{% endblock %}

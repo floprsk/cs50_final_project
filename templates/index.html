@@ -1,0 +1,53 @@
+{% extends "layout.html" %} 
+{% block body %} 
+<div class="login_container">
+<div>
+  You are not logged in.
+</div> 
+
+<div class="flash_container">
+  {% with messages = get_flashed_messages() %} 
+      {% if messages %}
+      <ul class="flashes" style="list-style: none; margin:0; padding:0;">
+        {% for message in messages %}
+          <li>{{message}}</li>
+          {% endfor %}
+      </ul>
+      {% endif %} 
+  {% endwith %}
+  </div>
+
+<!-- Login Forms -->
+<form action="/login" method="post">
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-default">username</span>
+    <input 
+      name="username"
+      autofocus
+      type="text"
+      class="form-control"
+      aria-label="Sizing example input"
+      aria-describedby="inputGroup-sizing-default"
+    />
+  </div>
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-default">password</span>
+    <input
+      name="password"
+      autofocus
+      type="password"
+      class="form-control"
+      aria-label="Sizing example input"
+      aria-describedby="inputGroup-sizing-default"
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Log in</button>
+</form>
+
+<a href="/register"><button class="btn btn-light">Register</button></a>
+</div>
+
+<footer>
+  <p>Copyright &copy 2023 Florian Purschke. All Rights Reserved</p>
+</footer>
+{% endblock %}

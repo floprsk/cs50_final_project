@@ -1,0 +1,205 @@
+{% extends "layout.html" %} 
+{% block body %}
+
+<div class="info_body">
+
+<div style="width:fit-content; padding:1rem;" class="input_group_nobt">
+    <p class="d-inline-flex">
+        <button class="button-4" type="button" data-bs-toggle="collapse" data-bs-target="#infos" aria-expanded="false" aria-controls="collapseExample">
+            Infos on usage
+        </button>
+    </p>
+    <div class="collapse" id="infos" >
+        <div style="width:fit-content" class="card card-body">
+            <span style="text-align: left;">Application needs to be combined with the installation of a <b>waterpump</b> and <b>humidity sensors</b> to work properly.</span>
+        </div>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages() %} 
+        {% if messages %}
+        <ul class="flashes" style="list-style: none">
+        {% for message in messages %}
+        <li>{{message}}</li>
+        {% endfor %}
+        </ul>
+{% endif %} {% endwith %}
+
+
+    <!--Check if user already added plants-->
+    {% if plants == [] %}
+    <div class="icon_container">
+        <span>No plants in plantbed yet.</span>
+
+        <a href="/adding_page">
+            <button type="submit" class="btn btn-light">
+                <span class="material-symbols-outlined">
+                    add
+                </span>
+            </button>
+        </a>
+    </div>
+    {% else  %}
+    
+        
+        <!--Create several plant_container for every plant user has added-->
+        {% for plant in plants %}
+        <div class="plantbed">
+
+        <div class="plant_container">
+            <div class="delete_button">
+                <form action="/delete_plant" method="post">
+                    <input name="plant_id_info" type="hidden" value="{{ plant[0] }}" />
+                    <button style="scale:0.8;" type="submit" class="btn btn-light">
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="click to delete plant">
+                            delete
+                            </span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="flower_container">
+                <span class="flower material-symbols-outlined"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="{{plant[1]}}">
+                    local_florist
+                    </span>
+            </div>
+
+            <!--Whole Container with data-->
+            <div class="data_container">
+                <!--Every row of Card-->
+                <div class="info_container">
+                    <!--Every Icon/data combination-->
+                        <!--Check if plant got schedule-->
+                        {% if plant[3] == "None"  %} <!--String because of special configs with cron-->
+                        <div class="icon_container">
+                            <span class="material-symbols-outlined"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="No watering schedule selected.">
+                                timer_off
+                            </span>
+                        </div>
+                        {% else %}
+                        <div class="icon_container">
+                            <span class="material-symbols-outlined"
+                            data-bs-toggle="tooltip" d ata-bs-placement="top" title="Watering schedule">
+                                date_range
+                            </span>                        
+                            <span>
+                                <!--days: seperate table of schedules of added plants of user which is logged in-->
+                                <!--Iterate through weekdays & check if weekday is selected-->                                <!--plant[0] = plant_id -> -1 bc plant_id starts with 1-->
+                                <!--days[plant[0]-1] = Acces weekday-list of the several plant-->
+                                {% if days[plant[9]-1][2] %} <!--mon-->
+                                    Mon
+                                {% endif %} 
+                                {% if days[plant[9]-1][3] %} <!--tue-->
+                                    Tue
+                                {% endif %} 
+                                {% if days[plant[9]-1][4] %} <!--wed-->
+                                    Wed
+                                {% endif %} 
+                                {% if days[plant[9]-1][5] %} <!--thi-->
+                                    Thi
+                                {% endif %}                                 
+                                {% if days[plant[9]-1][6] %} <!--fri-->
+                                    Fri
+                                {% endif %}
+                                {% if days[plant[9]-1][7] %} <!--sat-->
+                                    Sat
+                                {% endif %}
+                                {% if days[plant[9]-1][8] %} <!--sun-->
+                                    Sun
+                                {% endif %}                                 
+                                </span>
+                            </div>
+
+                        
+                            <div class="icon_container">                                <span class="material-symbols-outlined"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Watering Time">
+                                    schedule
+                                    </span>
+                                <span>
+                                    {{plant[8]}}:00 <!--watering_time-->
+                                </span>
+                            </div>
+                        
+                        {% endif %}
+                    
+                        
+                </div>
+                
+                <div class="info_container">
+                        {% if plant[7] == None %} <!--plant[7]: is_waterpump-->
+                        <div class="icon_container">
+                            <span class="material-symbols-outlined"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Waterpump not installed.">
+                                block
+                            </span> 
+                        </div>
+                        {% else %} 
+                            <div class="icon_container">
+                            <form action="/water_plant" method="post">
+                                <button type="submit" class="btn btn-light">
+                                <span class="material-symbols-outlined"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="click to water plant">
+                                water_drop</span>
+                                </button>
+                            </form>
+                            </div>
+                            
+                            <div class="icon_container">
+                                <span class="material-symbols-outlined"
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Watering amount">
+                                    valve
+                                </span>
+                                <span>{{ plant[4] }}s</span> <!--watering_amount-->
+                            </div>
+                        {% endif %}
+                    
+
+                   
+                <div class="icon_container">
+                        {% if plant[2] ==  None %}      <!--humidity-->
+                        
+                            <span class="material-symbols-outlined"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="No humidity sensor data availabe.">
+                                format_color_reset
+                            </span>
+
+                        {% elif plant[2] <= 33 %}
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Plant needs water.">
+                            humidity_low
+                            </span>
+                        <span>{{ plant[2] }}%</span> <!--moisture-->
+                        {% elif plant[2] <= 66 %}
+                        <span class="material-symbols-outlined"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Humidity Medium.">
+                            humidity_mid
+                            </span>
+                        <span>{{ plant[2] }}%</span> <!--moisture-->
+                        {% elif plant[2] <= 100 %}
+                            <span class="material-symbols-outlined"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="Plant is watered properly.">
+                                humidity_high
+                            </span>
+                            <span>{{ plant[2] }}%</span> <!--moisture-->
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="info_container">
+                <span>{{ plant[1] }}</span> <!--name-->
+            </div>
+        </div>
+        </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+
+    <footer>
+        <p>Copyright &copy 2023 Florian Purschke. All Rights Reserved</p>
+      </footer>
+{% endblock %}
