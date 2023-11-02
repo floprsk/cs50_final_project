@@ -7,17 +7,29 @@ With this Flask application, running on the Raspberry Pi (RPi), i can water my p
 
 For now it works properly for me and for one plant. Adding more plants and users depends on the installation of the appropriate components (waterpumps, sensors, relays...) 
 
+
+### Technologies used:
+- *Flask*
+
+    Python webframework to create dynamic web-applications combined with pyhton code to controle hardware or something else.
+    Leverages *Jinja2* to communicate bewteen html contents and pyhton code. When you run a flask project you can acces the application via an IP-Adress and handle user HTTP-requests.
+
+- *Sqlite*
+
+    Slim python database library used in the project to store the data of the users on a database on the RPi. If you need more power/functionality, then normal *SQL* is probably the way to go alongside *SQLAlchemy* python library.  
+
+- *HTML, CSS, Javascript*
+
+    With Flask you can easily build your applications with these 3 technologies, with the html-template functionalitys.
+
+
 ### Design
-I tried to keep the design minimalistic and modern. 
+#### Mobile View
 
-![](https://github.com/floprsk/project/Watering_Design.gif)
+![](https://github.com/floprsk/project/blob/main/Watering_Mobile.gif)
 
-![](https://github.com/floprsk/project/Watering_reg.gif)
-
-![](https://github.com/floprsk/project/Watering_Mobile.gif)
-
-
-
+#### Desktop View
+![](https://github.com/floprsk/project/blob/main/Watering_Design.gif)  
 
 The weekday picker is implemented with a for loop which loops through all possible inputs, which work kind of like html checkboxes. If a letter is clicked it is handed to the *request.form* element.
 
@@ -40,35 +52,11 @@ The weekday picker is implemented with a for loop which loops through all possib
         
         >>>: Intendation 
 
+#### Register functionality
+Ensured, that the user inputs the forms correctly, also when logging in the password is checked etc.
 
-### Technologies used:
-- *Flask*
+![](https://github.com/floprsk/project/blob/main/Watering_reg.gif)
 
-    Python webframework to create dynamic web-applications combined with pyhton code to controle hardware or something else.
-    Leverages *Jinja2* to communicate bewteen html contents and pyhton code. When you run a flask project you can acces the application via an IP-Adress and handle user HTTP-requests.
-
-- *Sqlite*
-
-    Slim python database library used in the project to store the data of the users on a database on the RPi. If you need more power/functionality, then normal *SQL* is probably the way to go alongside *SQLAlchemy* python library.  
-
-- *HTML, CSS, Javascript*
-
-    With Flask you can easily build your applications with these 3 technologies, with the html-template functionalitys.
-
-
-### Hardware & Components:
-
-Watering Kit: https://tinyurl.com/ysztek5f
-
-Raspberry Pi Zero 2 W: https://tinyurl.com/yvxapgye
-
-AD Converter (MCP3008): https://tinyurl.com/yu66hjb8
-
-Float Switch: https://tinyurl.com/yn6r9lkn
-
-Power Supply and Cables: https://tinyurl.com/ym2k55nk
-
-Power Adapter for Power Supply: https://tinyurl.com/ynamdxja
 
 
 ## Description of the Project:
@@ -82,7 +70,7 @@ In the several @routes, the inputs of the user via html forms (*templates* folde
 
 *def sensor_info()*:
 
-Reads out humidity-sensor data and returns the value in percent. Has to be configured to the several sensor which depends on setup (resistants of cables etc...)
+Reads out humidity-sensor data by reading out the corresponding SPI port and returns the value in percent. Has to be configured to the several sensor which depends on setup (resistants of cables etc...)
 
 *def float_switch()*: 
 
@@ -92,7 +80,7 @@ This function runs threaded beneath the main  application and checks every 5 sec
 
 Turns waterpump off. GPIO Pin 12 in my case is set to HIGH (1) to switch off the relay which controls the waterpump.
 
-#### Database functionality
+#### Database functionalities
 The database is stored on the RPi. It contains four tables: 
 
 (See also *create_db.txt*)
@@ -178,17 +166,18 @@ Need to have that to display only the elements of the current logged in user and
 
 
 #### Crontab functionality:
-The cron daemon is used for the time-based execution of processes in Unix and Unix-like operating systems such as Linux, BSD or macOS in order to automate recurring tasks - cron jobs.
+The cron daemon is used for the time-based execution of processes in Unix and Unix-like operating systems in order to automate recurring tasks - cron jobs. 
 
 With the crontab library installed, you can edit the crontab file on your RPi with python. 
 To use crontab-functionalites in python you will have to call a cron object like that at the beginning of every @app.route:
     
+    # app.py file
     cron = CronTab(user='flopi')
 
 
 With "*comment = ...*" in the following line you can give every cron-job a name, with which you can identify which cron-job belongs to which plant.
 
-
+    # app.py file
     identifier_sched = 'schedule' + str(plant_id)
     job1 = cron.new(command='python3 /home/flopi/Watering/Watering_app/sprinkle.py', comment = identifier_sched )
     job1.dow.on(*selected_days)
@@ -198,6 +187,7 @@ With "*comment = ...*" in the following line you can give every cron-job a name,
 
 You can also iterate through cron-jobs with the created cron-object and edit explicit crontab-lines.
 
+    # app.py file
     # Iterate through cron jobs and delete if theres already a schedule
     for job in cron:
         if job.comment == identifier_sched:
@@ -208,6 +198,7 @@ You can also iterate through cron-jobs with the created cron-object and edit exp
 #### Water the plant per button click
 In the /water_plant @app.route the action is handled, when the user wants to water the plant manually.
 
+    # app.py file
     # Library to acces GPIO Pins on the RPi
     import RPi.GPIO as GPIO
     
@@ -223,6 +214,7 @@ You have to set the variable *port* to the GPIO Port on the Pi which is controll
 ### HTML templates
 Several times in *app.py* the function
 
+    # app.py file
     render_template("file.html", placeholder = element)
 
 is called. 
@@ -235,7 +227,7 @@ The *layout.html* file is the base of all html templates for me.
 
 With adding
 
-    # Jinja2 notation   
+    # html template files  
     {% extends "layout.html" %} 
 
 at the top of your other html-templates you dont have to add the code for redundant elements like a nav on every template. But look in the files to see how it is exaclty done. 
@@ -260,9 +252,46 @@ With that notation you can hand elements to an html template and display it ther
 
 You can call it wathever you want, but it works like the principle of an placeholder, so i called it like that.
 
+### Other files on the RPi:
+- *boot.py*
+
+    Is executed on every reboot because it is configured like that in the crontab-file:
+
+        @reboot python3 (path to boot.py file)
+
+    Switches the relay which controls the waterpump off on every boot of the system.
+
+- *sprinkle.py*
+
+    There was already an @app.route("/water_plant"...) to water the plant manually when the button is clicked. But to configure a schedule on the RPi with crontab for automatic watering i used an external file which is added to the crontab file as command like that:
+
+        job1 = cron.new(command='.../sprinkle.py',  comment = identifier_sched )
+        cron.write()
+
+- *log_data.py*
+
+    Connects to the *watering_users* database and reads out the humidity-sensor. Inserts the data alonside a timestamp into the table *data* in an format compatible with Excel. This functionality works for one plant properly but would also be possible to scale it up.
+
+
 
 ### Infos on Usage:
 To work properly and to see all functionalities of the application, you will need to connect the necessary Hardware in real life, but you can watch my Video Demo to get more information about that.
+
+### Hardware & Components:
+
+Watering Kit: https://tinyurl.com/ysztek5f
+
+Raspberry Pi Zero 2 W: https://tinyurl.com/yvxapgye
+
+AD Converter (MCP3008): https://tinyurl.com/yu66hjb8
+
+Float Switch: https://tinyurl.com/yn6r9lkn
+
+Power Supply and Cables: https://tinyurl.com/ym2k55nk
+
+Power Adapter for Power Supply: https://tinyurl.com/ynamdxja
+
+
 ### Want to test a Demo Version on your own system?
 *python has to be installed on your system*
 - Create a directory (call it *app* or something) on your system with the **app_pc.py** file and the *templates* folder as a seperate! folder in the *app* folder  
