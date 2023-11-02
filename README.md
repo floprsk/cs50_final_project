@@ -10,11 +10,11 @@ For now it works properly for me and for one plant. Adding more plants and users
 ### Design
 I tried to keep the design minimalistic and modern. 
 
-![](https://github.com/floprsk/project/Watering_Design_GIF.gif)
+![](https://github.com/floprsk/project/Watering_Design.gif)
 
-![](https://github.com/floprsk/project/Watering_reg_GIF.gif)
+![](https://github.com/floprsk/project/Watering_reg.gif)
 
-![](https://github.com/floprsk/project/Watering_Mobile_GIF.gif)
+![](https://github.com/floprsk/project/Watering_Mobile.gif)
 
 
 
