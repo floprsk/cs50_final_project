@@ -53,7 +53,7 @@ The weekday picker is implemented with a for loop which loops through all possib
         >>>: Intendation 
 
 #### Register functionality
-Ensured, that the user inputs the forms correctly, also when logging in the password is checked etc.
+Ensured, that the user inputs the forms correctly, also when logging in, the password is checked etc.
 
 ![](https://github.com/floprsk/project/blob/main/Watering_reg.gif)
 
@@ -86,7 +86,7 @@ The database is stored on the RPi. It contains four tables:
 (See also *create_db.txt*)
 - users
     - id as Primary Key.
-    - stores username 
+    - username 
     - hashed password
 - plants
     - id as Primary Key
@@ -100,8 +100,7 @@ The database is stored on the RPi. It contains four tables:
     - id as Primary Key
     - timestamp and humidity in percent
 
-    --> data log of humidity (Excel compatible)
-
+    --> works properly for the setup with one plant, to add the functionality for more plants, you would have to add a several column with refers to the respective plant id's of the plants
 
 The following Code has to be at the beginning of every route which handles database operations, to create the necessary database objects. Otherwise you will get an error: 
 
@@ -110,6 +109,15 @@ The following Code has to be at the beginning of every route which handles datab
     con = sqlite3.connect("watering_users.db")
     cur = con.cursor()
 ```
+
+You can manipulate your database like that: 
+
+    cur.execute("DELETE FROM watering_days WHERE plant_id = ?", [plant_id])
+    con.commit()
+    con.close()
+
+The "?" notation is used to prevent SQL-Injection-Attacks. With con.commit() you commit your database actions to the database and with con.close() you close the connection.
+
 #### Specifications:
     
 Theres an explicit *watering_days* table because of Jinja2 problems i had with interpreting lists. 
@@ -117,11 +125,12 @@ Theres an explicit *watering_days* table because of Jinja2 problems i had with i
 When handing the *selected_days*[] list to an html template like that
 - ['Mon', 'Tue', 'Fri']
 
-every char was interpreted as an list element and not each day as one element. So every weekday column stores either *Nothing* or *1*, so that it can be displayed on the info_plant.html template.
+every char was interpreted as an list element and not each day as one element. So every column in the table *watering_days* stores either *Nothing* or *1*, so that it can be displayed on the info_plant.html template:
 
 Iteration through every element in the plants table:
 (in *info_plant.html*)
 
+    # info_plant.html file
     # Jinja2 notation 
     {% for plant in plants %}
 
@@ -134,6 +143,7 @@ Check if theres an entry for each day in the watering_days table (here as variab
 
 -> With that it is possible to display the several plants of the respective user which is logged in.
 
+    # info_plant.html file
     # Jinja2 notation 
     {% if days[plant[9]-1][2] %} <!--mon-->
         Mon
@@ -162,17 +172,17 @@ Check if theres an entry for each day in the watering_days table (here as variab
 
 
 #### Session functionality:
-Need to have that to display only the elements of the current logged in user and also only manipulating the respective database entries.
+Need to have that, to display only the elements of the current logged in user and also only manipulating the respective database entries.
 
 
 #### Crontab functionality:
-The cron daemon is used for the time-based execution of processes in Unix and Unix-like operating systems in order to automate recurring tasks - cron jobs. 
+The cron daemon is used for the time-based execution of processes in Unix and Unix-like operating systems in order to automate recurring tasks, also called cron jobs. 
 
 With the crontab library installed, you can edit the crontab file on your RPi with python. 
 To use crontab-functionalites in python you will have to call a cron object like that at the beginning of every @app.route:
     
     # app.py file
-    cron = CronTab(user='flopi')
+    cron = CronTab(user='username_on_Pi')
 
 
 With "*comment = ...*" in the following line you can give every cron-job a name, with which you can identify which cron-job belongs to which plant.
@@ -185,6 +195,10 @@ With "*comment = ...*" in the following line you can give every cron-job a name,
 
     cron.write()
 
+The "*selected_days" is a nice python tweak, which interprets the selected_days list (i. e. ['Mon', 'Tue', 'Fri']) list properly, in contrast to Jinja2, so that every day in the list is added to the crontab file in the right notation.
+
+So i am storing the information about the watering days once in the table *plants* additionaly, although i got an extra table *watering_days*. But it is not necessary to store the data two times, as the crontab commands do not depend on database operations but only on the variable *selected_days*. 
+
 You can also iterate through cron-jobs with the created cron-object and edit explicit crontab-lines.
 
     # app.py file
@@ -194,9 +208,12 @@ You can also iterate through cron-jobs with the created cron-object and edit exp
             cron.remove(job)
             cron.write()
 
+Similar methods are used for the implementation of the datalog cron jobs. 
+
+It is also important to keep the right sequence of this part of the code, because some parts depend on the variables *selected_days* *plant_id* and *plant_number* which are declared after the plant was added to the table *plants*. 
 
 #### Water the plant per button click
-In the /water_plant @app.route the action is handled, when the user wants to water the plant manually.
+In the /water_plant @app.route the action is handled, when the user wants to water the plant manually per button click.
 
     # app.py file
     # Library to acces GPIO Pins on the RPi
@@ -208,7 +225,8 @@ In the /water_plant @app.route the action is handled, when the user wants to wat
     GPIO.output(port, 0)
     time.sleep(6)
 
-You have to set the variable *port* to the GPIO Port on the Pi which is controlling the relay. Then you set it up as output and set it either 0 or 1, based on the relay you got. The time.sleep(seconds) function controles how long the waterpump is active.
+
+You have to declare the variable *port* as the GPIO Port on the Pi which is controlling the relay. Be aware of the two possible GPIO.setmodes(), BCM or BOARD. Then you set it up as output and set it either 0 or 1, based on the relay you got. The *time.sleep(seconds)* function controles how long the waterpump is active.
 
 
 ### HTML templates
@@ -219,7 +237,7 @@ Several times in *app.py* the function
 
 is called. 
 
-With that method you can display html files for the user on the Web-Application. 
+With that method you can display html files for the user on the Web-Application. It can be applied with familiar HTML and you can add also CSS and Javascript like you would do normally.
 
 **All the templates have to be in the same directory as the app.py file as a folder called "templates"!**
 
@@ -235,19 +253,27 @@ at the top of your other html-templates you dont have to add the code for redund
 ### Jinja 2
 Template engine which is already included with the installation of Flask. 
 
-All the "{%%}" and "{{}}" notations in the html template codes refer to Jinja2.
-
-    element = ['Mon', 'Tue', 'Fri']
-    render_template("file.html", placeholder = element)
+All the "{%%}" and "{{}}" notation in the html template codes refers to Jinja2. You can 
 
 In the *app.py* code it is also used here: 
 
-- placeholder = element
+    # app.py file
+    element = ['Mon', 'Tue', 'Fri']
+    render_template("file.html", placeholder = element)
 
-With that notation you can hand elements to an html template and display it there and even iterate through it with loops. In  the html template you can iterate through the element like that:
+In the html-templates you can display the template for example like that:
+```
+    # html-template files
+    <p>Here is the element: {{placeholder}}</p>
+```
+You can also use loops and other great functionalities in between the "{%%}" notation:
 
+    # html-template files
+    # create a div for every element in placeholder:
     {% for day in placeholder %}
-        ...
+        <div>
+            {{ placeholder[day] }}
+        </div>
     {% endfor %}
 
 You can call it wathever you want, but it works like the principle of an placeholder, so i called it like that.
@@ -255,11 +281,11 @@ You can call it wathever you want, but it works like the principle of an placeho
 ### Other files on the RPi:
 - *boot.py*
 
-    Is executed on every reboot because it is configured like that in the crontab-file:
+    Is executed on every reboot because it is configured like that in the crontab-file manually:
 
         @reboot python3 (path to boot.py file)
 
-    Switches the relay which controls the waterpump off on every boot of the system.
+    Switches off the relay which controls the waterpump on every boot of the system.
 
 - *sprinkle.py*
 
@@ -275,7 +301,7 @@ You can call it wathever you want, but it works like the principle of an placeho
 
 
 ### Infos on Usage:
-To work properly and to see all functionalities of the application, you will need to connect the necessary Hardware in real life, but you can watch my Video Demo to get more information about that.
+To work properly and to see all functionalities of the application, you will need to connect the necessary Hardware in real life, but you can watch my **Video Demo** to get more information about that.
 
 ### Hardware & Components:
 
@@ -299,4 +325,5 @@ Power Adapter for Power Supply: https://tinyurl.com/ynamdxja
     - You can also create the sqlite3-database on your own (commands documented in **create_db.txt**)
 - Install the necessary librarys on your system, documented in **requirements.txt** (command: pip3 install "library")
 - Open a command prompt in the *app*-directory and execute **_flask run_**, then you can acces the demo-app on your localhost
+- In the Demo Version (app_pc.py) the functions interacting with the RPi are commented out. 
 - (The register functionality will just store the data on your own system in the watering_users.db file, so no worrys)
