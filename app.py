@@ -106,6 +106,7 @@ def after_request(response):
 def index():
     pump_off()
 
+    # Connect with database
     con = sqlite3.connect("watering_users.db")
     cur = con.cursor()
     # If not logged in yet --> index.html
@@ -134,7 +135,8 @@ def login():
     # Forget any user_id
     session["id"] = None
     session["name"] = None
-
+    
+    # Connect with database
     con = sqlite3.connect("watering_users.db")
     cur = con.cursor()
 
