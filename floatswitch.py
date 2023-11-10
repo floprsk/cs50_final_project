@@ -18,7 +18,6 @@ try:
 
     if is_full == 0:
         GPIO.output(port,1)
-    print("YASALAAAAAAAAAAAAAAMMEEEEEE")
 
 except Exception as e:
         print(f"Fehler in float_switch: {e}")

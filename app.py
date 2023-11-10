@@ -56,7 +56,7 @@ def clean_exit(signal, frame):
 
 
 # Checks if water level is too low
-# If too low: Water pump goes off
+# If too low: Water pump is turned off
 def float_switch():
     try:
         while True:
@@ -107,6 +107,7 @@ def after_request(response):
 def index():
     pump_off()
 
+    # Connect with database
     con = sqlite3.connect("watering_users.db")
     cur = con.cursor()
     # If not logged in yet --> index.html
@@ -135,7 +136,8 @@ def login():
     # Forget any user_id
     session["id"] = None
     session["name"] = None
-
+    
+    # Connect with database
     con = sqlite3.connect("watering_users.db")
     cur = con.cursor()
 
@@ -259,7 +261,7 @@ def register():
             # Insert user into database with hashed password
             else:
                 cur.execute("INSERT INTO users(name, password) VALUES(?, ?)", [
-                            username, generate_password_hash(password, method='pbkdf2', salt_length=16)])
+                            username, generate_password_hash(password, method='pbkdf2:sha1',salt_length=16 )])
                 con.commit()
                 con.close()
                 flash("Succesfully registered!")

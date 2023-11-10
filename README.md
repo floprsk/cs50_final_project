@@ -320,10 +320,12 @@ Power Adapter for Power Supply: https://tinyurl.com/ynamdxja
 
 ### Want to test a Demo Version on your own system?
 *Python has to be installed on your system*
+- Create a directory (call it *app* or something) on your system with the **app_pc.py** file and the *templates* folder as a separate! folder in the *app* folder  
 - Create a directory (call it *app* or something) on your system with the **app_pc.py** file and the *templates* and *static* folder as separate! folders in the *app* folder  
 - Download the **watering_users.db** file and put it also in the *app*-directory
     - You can also create the sqlite3-database on your own (commands documented in **create_db.txt**)
 - Install the necessary libraries on your system, documented in **requirements.txt** (command: pip3 install "library")
 - Open a command prompt in the *app*-directory and execute **_flask run_**, then you can access the demo-app on your localhost
 - In the Demo Version (app_pc.py) the functions interacting with the RPi are commented out. 
+- (The register functionality will just store the data on your own system in the watering_users.db file, so no worries)
 - (The register functionality will just store the data on your own system in the watering_users.db file, so no worries)

@@ -285,7 +285,7 @@ def addPlant():
     #cron = CronTab(user='flopi')
 
     # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST" and session["name"] == "flo":
+    if request.method == "POST":
         # Collecting form data
         plant_name = request.form.get("plant_name")
 
@@ -422,9 +422,6 @@ def addPlant():
             return redirect("/adding_page")
 
     # User reached route via GET (as by submitting a form via GET)
-    elif session["name"] != "flo":
-        flash("No permissions to add plants.")
-        return redirect("/adding_page")
     else:
         return redirect("/adding_page")
 
@@ -437,7 +434,7 @@ def deletePlant():
     cur = con.cursor()
     #cron = CronTab(user='flopi')
 
-    if request.method == "POST" and session["name"] == "flo":
+    if request.method == "POST":
         # Collect form data
         # if form on adding_page.html was submitted
         plant_id = request.form.get("plant_id")
@@ -471,9 +468,7 @@ def deletePlant():
             return redirect("/")
 
     # User reached route via GET (as by submitting a form via GET)
-    elif session["name"] != "flo":
-        flash("No permissions to delete plants.")
-        return redirect("/")
+
     else:
         return redirect("/")
 

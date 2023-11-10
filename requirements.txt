@@ -1,0 +1,6 @@
+Flask
+Flask-Session
+Werkzeug
+Datetime 
+Sqlite3
+Time
