@@ -56,18 +56,19 @@ def clean_exit(signal, frame):
 
 
 # Checks if water level is too low
-# If too low: Water pump goes off
+# If too low: Water pump is turned off
 def float_switch():
     try:
         while True:
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(21, GPIO.IN)
-            GPIO.setup(port, GPIO.OUT)
 
             is_full = GPIO.input(21)
             # If tank is empty
             if is_full == 1:
+                GPIO.setup(port, GPIO.OUT)
                 GPIO.output(port, 1)
+                GPIO.cleanup()
                 print("Tank is empty. Pumpe ausgeschaltet.")
             else:
                 print("Tank is full")
@@ -260,7 +261,7 @@ def register():
             # Insert user into database with hashed password
             else:
                 cur.execute("INSERT INTO users(name, password) VALUES(?, ?)", [
-                            username, generate_password_hash(password, method='pbkdf2', salt_length=16)])
+                            username, generate_password_hash(password, method='pbkdf2:sha1',salt_length=16 )])
                 con.commit()
                 con.close()
                 flash("Succesfully registered!")
