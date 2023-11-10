@@ -14,4 +14,4 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(relais1, GPIO.OUT)
 
 # GPIO DEAKTIVIEREN
-GPIO.output(relais1, GPIO.HIGH)
+GPIO.output(relais1, 1)

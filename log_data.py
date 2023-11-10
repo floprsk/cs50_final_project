@@ -24,7 +24,7 @@ def sensor_info():
     return int(per)
 
 
-con = sqlite3.connect("data_log.db")
+con = sqlite3.connect("watering_users.db")
 cur = con.cursor()
 
 humidity = sensor_info()

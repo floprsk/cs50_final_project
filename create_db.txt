@@ -1,0 +1,51 @@
+# watering_users.db
+
+CREATE TABLE users(  
+   id INTEGER,  
+   name TEXT,
+   password TEXT,  
+   PRIMARY KEY (id) 
+);  
+
+CREATE TABLE plants(
+id INTEGER,                                         
+name TEXT,                                          
+humidity INTEGER,
+watering_schedule TEXT,
+watering_amount INTEGER,
+user_id INTEGER,
+is_sensor TEXT,
+is_waterpump TEXT,
+watering_time INTEGER,
+plant_number INTEGER DEFAULT 1,
+PRIMARY KEY(id),
+FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+
+
+CREATE TABLE watering_days (
+    plant_id INTEGER,
+    user_id INTEGER,
+    mon INTEGER,
+    tue INTEGER,
+    wed INTEGER,
+    thu INTEGER,
+    fri INTEGER,
+    sat INTEGER,
+    sun INTEGER,
+    PRIMARY KEY(plant_id), 
+    FOREIGN KEY(plant_id) REFERENCES plants(id)
+);
+
+
+# data_log.db
+
+CREATE TABLE data(
+   id INTEGER,
+   time TEXT,
+   humidity_per TEXT,
+   PRIMARY KEY(id)
+);
+
+
