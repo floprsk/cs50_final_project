@@ -62,12 +62,13 @@ def float_switch():
         while True:
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(21, GPIO.IN)
-            GPIO.setup(port, GPIO.OUT)
 
             is_full = GPIO.input(21)
             # If tank is empty
             if is_full == 1:
+                GPIO.setup(port, GPIO.OUT)
                 GPIO.output(port, 1)
+                GPIO.cleanup()
                 print("Tank is empty. Pumpe ausgeschaltet.")
             else:
                 print("Tank is full")
