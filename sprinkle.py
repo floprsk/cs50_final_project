@@ -13,6 +13,6 @@ GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(port, GPIO.OUT)
 GPIO.output(port, 0)
-time.sleep(10) # 10s watering is equal to ca. 200ml water in my setup
+time.sleep(6)  # 10s watering is equal to ca. 200ml water in my setup
 GPIO.output(port, 1)
 GPIO.cleanup()
