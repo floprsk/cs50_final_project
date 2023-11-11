@@ -30,10 +30,10 @@ port = 12
 def sensor_info():
     try:
         hum = mcp.read_adc(0)
-        per = ((585-int(hum))*100) / 285
-        # 585 = minimal humidity
-        # 300 = maximal humidity 
-        # --> 285 = difference 
+        per = ((590-hum)*100) / 322
+        # 590 = minimal humidity
+        # 268 = maximal humidity 
+        # --> 322 = difference 
         return int(per)
     except:
         return None
@@ -208,7 +208,7 @@ def adding_page():
         # return adding_page
         # new route for that, so that adding_page is reached by (add) buttons
         # Bc i wanted the landing page to be info_plant.html (lookup "/" route)
-        return render_template("adding_page.html", plants=all_plants, days=watering_days, humidity=sensor_info(), session=session)
+        return render_template("adding_page.html", plants=all_plants, days=watering_days, session=session)
 
 # Log user out
 
