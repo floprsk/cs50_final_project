@@ -41,7 +41,7 @@
 
                 <div class="input-group">
                     <span style="width:10rem" class="input-group-text">Watering amount</span>
-                    <input name="watering_amount" type="number" value="10" readonly class="form-control"
+                    <input name="watering_amount" type="number" value="6" readonly class="form-control"
                     style="text-align: center;">
                     <span class="input-group-text">s</span>
                 </div>
@@ -152,7 +152,7 @@
                         humidity_mid
                         </span>
                     <span>{{ plant[2] }}%</span> <!--moisture-->
-                    {% elif plant[2] <= 100 %}
+                    {% elif plant[2] <= 110 %}
                         <span class="material-symbols-outlined"
                         data-bs-toggle="tooltip" data-bs-placement="top" title="Plant is watered properly.">
                             humidity_high
