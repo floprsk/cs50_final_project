@@ -394,6 +394,7 @@ def addPlant():
                         cron.write()
 
                 job1 = cron.new(command='python3 /home/flopi/Watering/Watering_app/sprinkle.py', comment = identifier_sched )
+                job1.setall('0 0 * * 0')
                 job1.dow.on(*selected_days)
                 job1.hour.on(watering_time)
 
