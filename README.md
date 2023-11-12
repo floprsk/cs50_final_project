@@ -190,6 +190,8 @@ With "*comment = ...*" in the following line you can give every cron-job a name,
     # app.py file
     identifier_sched = 'schedule' + str(plant_id)
     job1 = cron.new(command='Python3 /home/flopi/Watering/Watering_app/sprinkle.py', comment = identifier_sched )
+    # this line to set the values other than dow and hour
+    job1.set('0 0 0 0 0')
     job1.dow.on(*selected_days)
     job1.hour.on(watering_time)
 
