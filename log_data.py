@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+import datetime
 
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
@@ -17,10 +17,10 @@ GPIO.setmode(GPIO.BCM)
 
 def sensor_info():
     hum = mcp.read_adc(0)
-    per = ((590-int(hum))*100) / 314
+    per = ((590-int(hum))*100) / 322
     # 590 = minimal humidity
-    # 277 = maximal humidity
-    # --> 314 = difference
+    # 268 = maximal humidity
+    # --> 322 = difference
     return int(per)
 
 
